@@ -1,0 +1,45 @@
+
+.tourlist {
+	position: absolute;
+	top: 2%;
+	left: 1%;
+	width: 40%;
+	height: 60%;
+	border-color: black;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.osmMap {
+	position: absolute;
+	top: 2%;
+	right: 1%;
+	width: 57%;
+	height: 60%;
+	border-color: black;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.profile {
+	position: absolute;
+	bottom: 2%;
+	left: 1%;
+	width: 98%;
+	height: 34%;
+	border-color: black;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.tourlistTable {
+	width: 100%;
+}
+
+.tourlistTable .center {
+	text-align: center;
+}
+
+.myProfile {
+	opacity:.25;
+}
