@@ -101,12 +101,14 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 				var tour = gpxParser.getTrack(id);
 				$scope.tourlistMetaData.push({
 					id: tour.id,
+					path: tour.path,
 					selected: $scope.tourlist[id].selected,
 					color: tour.color,
 					desc: tour.desc,
 					name: tour.name,
 					type: tour.type,
 					stats: {
+						date: tour.stats.date,
 						duration: tour.stats.duration,
 						eleMin: tour.stats.eleMin,
 						eleMax: tour.stats.eleMax,

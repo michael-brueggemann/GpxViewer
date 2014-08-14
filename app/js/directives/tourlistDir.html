@@ -4,16 +4,19 @@
 		<tr>
 			<th></th>
 			<th>Name</th>
-			<th>Typ</th>
+			<th>Datum</th>
 			<th>Dauer</th>
 			<th>min H.</th>
 			<th>max H</th>
 			<th>Höhenmeter</th>
 			<th>Distanz</th>
+			<th></th>
 		</tr>
 		<tr>
 			<td class="center"><input type="checkbox" ng-click="selectionChangedForAll($event)"></td>
 			<td><input ng-model="search.name"></td>
+			<td></td>
+			<td></td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -24,12 +27,13 @@
 		<tr ng-repeat="tour in tourlistMetaData | filter:myFilter(search)">
 			<td class="center"><input type="checkbox" ng-model="tour.selected" ng-click="selectionChanged($event, tour)"></td>
 			<td style="color: {{tour.color}}" ng-mouseover="showDesc(tour.desc)">{{tour.name}}</td>
-			<td class="center tooltipp" id="gerade">{{tour.type}}</td>
+			<td class="center">{{tour.stats.date}}</td>
 			<td class="center">{{tour.stats.duration}}</td>
 			<td class="center">{{tour.stats.eleMin | number:0}}</td>
 			<td class="center">{{tour.stats.eleMax | number:0}}</td>
 			<td class="center">{{tour.stats.eleRise | number:0}}</td>
 			<td class="center">{{tour.stats.distance | number:0}}</td>
+			<td class="center"><a href="{{tour.path}}">gpx</a></td>
 		</tr>
 	</table>
 	
