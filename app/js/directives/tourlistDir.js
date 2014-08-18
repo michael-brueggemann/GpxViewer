@@ -35,31 +35,43 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 			log.debug('myFilter()');
 
 			return function(tour) {
-				log.trace('check filter for id=', tour.id);
+				log.debug('check filter for id=', tour.id);
 				var result = true;
 
 				var filterName = $scope.filter.name || '';
+				var filterDuration = $scope.filter.duration || '';
 				var filterDistance = $scope.filter.distance || '';
 				var filterEleRise = $scope.filter.eleRise || '';
 
 				// don't filter if filter string is empty
 				// ok when name matches
+				log.trace('filter: name');
 				if (filterName.length === 0
 						|| tour.name.toLowerCase().indexOf(filterName.toLowerCase()) > -1) {
-					log.debug('name filter: visible=true');
+					log.trace('  filter: "empty" => visible=true');
 					result = result && true;
 				}
 				// not in result => set selected to false
 				else {
-					log.debug('name filter: visible=false');
+					log.trace('  visible=false');
 					tour.selected = false;
 					result = result && false;
 				}
 
+				log.trace('filter: duration');
+				if (tour.stats.duration instanceof Date) {
+					result = result && filterByNumberString(filterDuration, tour.stats.duration.getTime() / (60*1000), tour);
+				}
+
+				log.trace('filter: distance');
 				result = result && filterByNumberString(filterDistance, tour.stats.distance, tour);
+
+				log.trace('filter: eleRise');
 				result = result && filterByNumberString(filterEleRise, tour.stats.eleRise, tour);
 
 				tour.isFilterVisible = result;
+
+				log.debug('isVisible:', tour.isFilterVisible);
 				return result;
 			};
 		};
@@ -75,36 +87,39 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 
 			// don't filter if filter string is empty
 			if (filterString.length <= 1) {
-				log.debug('filter: "empty" => visible=true');
+				log.trace('  filter: "empty" => visible=true');
 				return true;
 			} else {
-				log.debug('filter: visible=true');
 				var sign = filterString.substring(0, 1);
 				var value = filterString.substring(1);
 				if (sign === '>') {
-					log.debug('filter: >');
+					log.trace('  filter: >');
 					if (tourValue >= value) {
-						log.debug('   visible=true');
+						log.trace('    visible=true');
 						return true;
 					} else {
-						log.debug('   visible=false');
+						log.trace('    visible=false');
 						tour.selected = false;
 						return false;
 					}
 				} else if (sign === '<') {
-					log.debug('filter: <');
+					log.debug('  filter: <');
 					if (tourValue <= value) {
-						log.debug('   visible=true');
+						log.debug('    visible=true');
 						return true;
 					} else {
-						log.debug('   visible=false');
+						log.debug('    visible=false');
 						tour.selected = false;
 						return false;
 					}
 				} else {
 					log.info('wrong filter:', filterString);
+					return true;
 				}
 			}
+
+			// default: no filter
+			return true;
 		}
 
 		$scope.showDesc = function(desc) {
@@ -131,7 +146,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 		$scope.$watch('tourlist', function(newTourlist, oldTourlist) {
 			log.trace('watch for tourlist triggered');
 			if (Object.keys(newTourlist).length !== Object.keys(oldTourlist).length) {
-				changed();
+				initTourlistMetaData();
 			}
 //			else {
 //				for (var id in newTourlist) {
@@ -144,7 +159,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 		},
 				true);
 
-		function changed() {
+		function initTourlistMetaData() {
 			log.info('changed !!!');
 
 			$scope.tourlistMetaData = new Array();

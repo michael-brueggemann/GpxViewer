@@ -6,7 +6,8 @@ angular
 			'ngRoute',
 			'ngResource',
 			'gpxViewer.controllers',
-			'gpxViewer.services'
+			'gpxViewer.services',
+			'gpxViewer.filters'
 		])
 		.config(['$routeProvider',
 			function($routeProvider) {
@@ -50,7 +51,7 @@ if (window.location.host === 'localhost:8383') {
 	log4javascript.getLogger('gpxViewer.models').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.utils.asyncExec').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.services.gpxParser').setLevel(log4javascript.Level.INFO);
-	log4javascript.getLogger('gpxViewer.directives.tourlistDirCtrl').setLevel(log4javascript.Level.INFO);
+	log4javascript.getLogger('gpxViewer.directives.tourlistDirCtrl').setLevel(log4javascript.Level.TRACE);
 	log4javascript.getLogger('gpxViewer.directives.osmDirCtrl').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.directives.profileDirCtrl').setLevel(log4javascript.Level.INFO);
 
@@ -126,6 +127,35 @@ function calcDistance(p1, p2) {
 	var d = R * c;
 
 	return Math.round(d * 1000);
+}
+
+
+/**
+ * Formats a date in hour:min.
+ * 
+ * @param {Date} date the duration to format
+ * @returns {String} the formatted date (e.g. 3:20)
+ */
+function formatDuration(date) {
+	var result = '';
+
+	if (date) {
+		var hour = date.getUTCHours();
+		if (hour < 10) {
+			result = '0' + hour;
+		} else {
+			result = hour;
+		}
+		var minutes = date.getUTCMinutes();
+		result += ':';
+		if (minutes < 10) {
+			result += '0' + minutes;
+		} else {
+			result += minutes;
+		}
+	}
+
+	return result;
 }
 
 

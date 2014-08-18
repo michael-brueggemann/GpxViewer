@@ -68,3 +68,5 @@ function mapCtrl($scope, $routeParams, gpxParser) {
 angular
 		.module('gpxViewer.controllers', [])
 		.controller('mapCtrl', ['$scope', '$routeParams', 'gpxParser', mapCtrl]);
+
+

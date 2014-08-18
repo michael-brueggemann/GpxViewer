@@ -145,44 +145,12 @@ function Tour(id, name) {
 		});
 		this.stats = statsResult;
 
-		// format time
-		if ( !statsResult.timeMax || !statsResult.timeMin ) {
-			this.stats.duration = '';
-		} else {
-			var timeDiff = statsResult.timeMax - statsResult.timeMin;
-			var dateDiff = new Date(timeDiff);
-			var hour = dateDiff.getUTCHours();
-			if (hour < 10) {
-				this.stats.duration = '0' + hour;
-			} else {
-				this.stats.duration = hour;
-			}
-			var minutes = dateDiff.getUTCMinutes();
-			this.stats.duration += ':';
-			if (minutes < 10) {
-				this.stats.duration += '0' + minutes;
-			} else {
-				this.stats.duration += minutes;
-			}
-			
-			var date = new Date(statsResult.timeMin);
-			this.stats.date = '';
-			var day = date.getDate();
-			if (day < 10) {
-				this.stats.date += '0';
-			}
-			this.stats.date += day + '.';
-			var month = date.getMonth()+1;
-			if (month < 10) {
-				this.stats.date += '0';
-			}
-			this.stats.date += month;
-			
-			this.stats.date += '.' + (date.getYear()+1900);
+		if (statsResult.timeMin && statsResult.timeMax) {
+			this.stats.duration = new Date(statsResult.timeMax - statsResult.timeMin);
 		}
-
-//		var sdf = new SimpleDateFormat("HH:mm");
-//		this.stats.duration = sdf.format(new Date());
+		if (statsResult.timeMin) {
+			this.stats.date = new Date(statsResult.timeMin);
+		}
 	};
 
 }

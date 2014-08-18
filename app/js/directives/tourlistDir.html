@@ -16,7 +16,7 @@
 			<td class="center"><input type="checkbox" ng-click="selectionChangedForAll($event)"></td>
 			<td><input ng-model="filter.name"></td>
 			<td></td>
-			<td></td>
+			<td class="center"><input ng-model="filter.duration" size="5"></td>
 			<td></td>
 			<td></td>
 			<td class="center"><input ng-model="filter.eleRise" size="5"></td>
@@ -27,8 +27,8 @@
 		<tr ng-repeat="tour in tourlistMetaData | filter:myFilter(filter)">
 			<td class="center"><input type="checkbox" ng-model="tour.selected"></td>
 			<td style="color: {{tour.color}}" ng-mouseover="showDesc(tour.desc)">{{tour.name}}</td>
-			<td class="center">{{tour.stats.date}}</td>
-			<td class="center">{{tour.stats.duration}}</td>
+			<td class="center">{{tour.stats.date | date:"dd.MM.yyyy"}}</td>
+			<td class="center">{{tour.stats.duration | formatDuration}}</td>
 			<td class="center">{{tour.stats.eleMin | number:0}}</td>
 			<td class="center">{{tour.stats.eleMax | number:0}}</td>
 			<td class="center">{{tour.stats.eleRise | number:0}}</td>
