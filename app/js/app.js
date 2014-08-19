@@ -7,7 +7,8 @@ angular
 			'ngResource',
 			'gpxViewer.controllers',
 			'gpxViewer.services',
-			'gpxViewer.filters'
+			'gpxViewer.filters',
+			'ui.bootstrap'
 		])
 		.config(['$routeProvider',
 			function($routeProvider) {

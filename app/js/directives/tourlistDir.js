@@ -15,6 +15,15 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 		$scope.filter.name = '';
 
 		$scope.tourlistMetaData = new Array();
+		
+		// default sort order
+		$scope.sortProperty = 'stats.eleRise';
+
+		// bad (access of window)
+		$scope.tourGroups = new Array();
+		for (var key in window.gpxFiles) {
+			$scope.tourGroups.push(key);
+		}
 
 		$scope.selectionChangedForAll = function(event) {
 			log.debug('selectionChangedForAll');
@@ -60,7 +69,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 
 				log.trace('filter: duration');
 				if (tour.stats.duration instanceof Date) {
-					result = result && filterByNumberString(filterDuration, tour.stats.duration.getTime() / (60*1000), tour);
+					result = result && filterByNumberString(filterDuration, tour.stats.duration.getTime() / (60 * 1000), tour);
 				}
 
 				log.trace('filter: distance');

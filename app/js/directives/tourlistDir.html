@@ -1,32 +1,37 @@
 <div id="tourlist" class="tourlist">
+	
+	Groups:
+	<a ng-repeat="group in tourGroups" href="#/{{group}}">
+		{{group}}
+	</a>
 
 	<table class="tourlistTable">
 		<tr>
 			<th></th>
-			<th>Name</th>
-			<th>Datum</th>
-			<th>Dauer</th>
-			<th>min H.</th>
-			<th>max H.</th>
-			<th>Höhenm.</th>
-			<th>Distanz</th>
+			<th ng-click="sortProperty = 'stats.name'" ng-class="{highlightSorting: sortProperty=='stats.name'}">Name</th>
+			<th class="center" ng-click="sortProperty = 'stats.date'" ng-class="{highlightSorting: sortProperty=='stats.date'}">Datum</th>
+			<th class="center" ng-click="sortProperty = 'stats.duartion'" ng-class="{highlightSorting: sortProperty=='stats.duartion'}">Dauer</th>
+			<th class="center" ng-click="sortProperty = 'stats.eleMin'" ng-class="{highlightSorting: sortProperty=='stats.eleMin'}">min H.</th>
+			<th class="center" ng-click="sortProperty = 'stats.eleMax'" ng-class="{highlightSorting: sortProperty=='stats.eleMax'}">max H.</th>
+			<th class="center" ng-click="sortProperty = 'stats.eleRise'" ng-class="{highlightSorting: sortProperty=='stats.eleRise'}">Höhenm.</th>
+			<th class="center" ng-click="sortProperty = 'stats.distance'" ng-class="{highlightSorting: sortProperty=='stats.distance'}">Distanz</th>
 			<th></th>
 		</tr>
 		<tr>
 			<td class="center"><input type="checkbox" ng-click="selectionChangedForAll($event)"></td>
 			<td><input ng-model="filter.name"></td>
 			<td></td>
-			<td class="center"><input ng-model="filter.duration" size="5"></td>
+			<td class="center"><input ng-model="filter.duration" size="5" tooltip="Dauer in Minuten (z.B: >200)" tooltip-placement="bottom"></td>
 			<td></td>
 			<td></td>
-			<td class="center"><input ng-model="filter.eleRise" size="5"></td>
-			<td class="center"><input ng-model="filter.distance" size="5"></td>
+			<td class="center"><input ng-model="filter.eleRise" size="5" tooltip="Höhenmeter (z.B: <1000)" tooltip-placement="bottom"></td>
+			<td class="center"><input ng-model="filter.distance" size="5" tooltip="Distanz in Metern (z.B: <25000)" tooltip-placement="bottom"></td>
 			<td></td>
 		</tr>
 		<!--<tr ng-repeat="tour in tourlist | filter:{name: filter.name}">-->
-		<tr ng-repeat="tour in tourlistMetaData | filter:myFilter(filter)">
+		<tr ng-repeat="tour in tourlistMetaData | filter:myFilter(filter) | orderBy: sortProperty">
 			<td class="center"><input type="checkbox" ng-model="tour.selected"></td>
-			<td style="color: {{tour.color}}" ng-mouseover="showDesc(tour.desc)">{{tour.name}}</td>
+			<td style="color: {{tour.color}}" tooltip-html-unsafe="{{tour.desc}}" tooltip-placement="right" ng-mouseover="showDesc(tour.desc)">{{tour.name}}</td>
 			<td class="center">{{tour.stats.date | date:"dd.MM.yyyy"}}</td>
 			<td class="center">{{tour.stats.duration | formatDuration}}</td>
 			<td class="center">{{tour.stats.eleMin | number:0}}</td>
