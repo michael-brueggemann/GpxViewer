@@ -11,16 +11,24 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 		var log = log4javascript.getLogger("gpxViewer.directives.tourlistDirCtrl");
 		log.debug('creating directive controller: tourlistDirCtrl');
 
+		var sdfYear = new SimpleDateFormat("yyyy");
+		var sdfMonthYear = new SimpleDateFormat("MM.yyyy");
+
 		$scope.filter = {};
 		$scope.filter.name = '';
+		
+		// sum for filtered list
+		$scope.sum = {};
 
 		$scope.tourlistMetaData = new Array();
-		
+
 		// default sort order
 		$scope.sortProperty = 'stats.eleRise';
 
 		// bad (access of window)
 		$scope.tourGroups = new Array();
+		// special key for "all"
+		$scope.tourGroups.push("all");
 		for (var key in window.gpxFiles) {
 			$scope.tourGroups.push(key);
 		}
@@ -42,12 +50,25 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 
 		$scope.myFilter = function(criteria) {
 			log.debug('myFilter()');
-
+			
+			$scope.sum = {
+				duration: 0,
+				eleRise: 0,
+				distance: 0
+			};
+			$scope.sum.duration = new Date();
+			$scope.sum.duration.setTime(0);
+			
+			/**
+			 * @param {Tour} tour
+			 * @returns {@var;result|Boolean}
+			 */
 			return function(tour) {
 				log.debug('check filter for id=', tour.id);
 				var result = true;
 
 				var filterName = $scope.filter.name || '';
+				var filterDate = $scope.filter.date || '';
 				var filterDuration = $scope.filter.duration || '';
 				var filterDistance = $scope.filter.distance || '';
 				var filterEleRise = $scope.filter.eleRise || '';
@@ -67,6 +88,11 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 					result = result && false;
 				}
 
+				log.trace('filter: date');
+				if (filterDate.length >= 4) {
+					result = result && filterByDate(filterDate, tour);
+				}
+
 				log.trace('filter: duration');
 				if (tour.stats.duration instanceof Date) {
 					result = result && filterByNumberString(filterDuration, tour.stats.duration.getTime() / (60 * 1000), tour);
@@ -78,12 +104,65 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 				log.trace('filter: eleRise');
 				result = result && filterByNumberString(filterEleRise, tour.stats.eleRise, tour);
 
+				// change tour settings
 				tour.isFilterVisible = result;
+				if (tour.isFilterVisible === false) {
+					tour.selected = false;
+				}
+				
+				if (tour.isFilterVisible === true) {
+					if (tour.stats.duration instanceof Date) {
+						$scope.sum.duration = new Date($scope.sum.duration.getTime() + tour.stats.duration.getTime());
+					}
+					$scope.sum.eleRise += tour.stats.eleRise;
+					$scope.sum.distance += tour.stats.distance;
+				}
 
 				log.debug('isVisible:', tour.isFilterVisible);
 				return result;
 			};
 		};
+
+		/**
+		 * Spezial date filter
+		 * @param {String} filterDate
+		 * @param {Tour} tour
+		 */
+		function filterByDate(filterDate, tour) {
+
+			// try to interpret as year (e.g. "2004")
+			if (filterDate.length === 4) {
+				log.trace("  interpret as year");
+				if (sdfYear.format(tour.stats.date) === filterDate) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			// try to interpret as month.year (e.g. "05.2004")
+			if (filterDate.length === 7) {
+				log.trace("  interpret as month.year");
+				if (sdfMonthYear.format(tour.stats.date) === filterDate) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			// TODO interprete as date with ">" or "<" sign (e.g. ">01.03.2014")
+			if (filterDate.length === 11) {
+				log.trace("  interpret as date");
+				log.warn(" IMPL missing");
+			}
+
+			// default if there is a filter string: filter
+			if (filterDate.length >= 4) {
+				return false;
+			}
+			
+			return true;
+		}
 
 		/**
 		 * 
@@ -108,17 +187,15 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 						return true;
 					} else {
 						log.trace('    visible=false');
-						tour.selected = false;
 						return false;
 					}
 				} else if (sign === '<') {
 					log.debug('  filter: <');
 					if (tourValue <= value) {
-						log.debug('    visible=true');
+						log.trace('    visible=true');
 						return true;
 					} else {
-						log.debug('    visible=false');
-						tour.selected = false;
+						log.trace('    visible=false');
 						return false;
 					}
 				} else {

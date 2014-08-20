@@ -52,9 +52,9 @@ if (window.location.host === 'localhost:8383') {
 	log4javascript.getLogger('gpxViewer.models').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.utils.asyncExec').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.services.gpxParser').setLevel(log4javascript.Level.INFO);
-	log4javascript.getLogger('gpxViewer.directives.tourlistDirCtrl').setLevel(log4javascript.Level.TRACE);
+	log4javascript.getLogger('gpxViewer.directives.tourlistDirCtrl').setLevel(log4javascript.Level.DEBUG);
 	log4javascript.getLogger('gpxViewer.directives.osmDirCtrl').setLevel(log4javascript.Level.INFO);
-	log4javascript.getLogger('gpxViewer.directives.profileDirCtrl').setLevel(log4javascript.Level.INFO);
+	log4javascript.getLogger('gpxViewer.directives.profileDirCtrl').setLevel(log4javascript.Level.DEBUG);
 
 	logRoot.trace('Trace level check');
 	logRoot.info('Logging loaded and configured.');
@@ -141,12 +141,21 @@ function formatDuration(date) {
 	var result = '';
 
 	if (date) {
-		var hour = date.getUTCHours();
+		var day = date.getUTCDate();
+
+		var hour = 0;
+		
+		if (day > 1) {
+			hour += (day-1)*24;
+		}
+
+		hour += date.getUTCHours();
 		if (hour < 10) {
 			result = '0' + hour;
 		} else {
 			result = hour;
 		}
+		
 		var minutes = date.getUTCMinutes();
 		result += ':';
 		if (minutes < 10) {

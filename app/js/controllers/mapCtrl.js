@@ -20,13 +20,26 @@ function mapCtrl($scope, $routeParams, gpxParser) {
 		filter = 'development';
 	}
 
-	var tracksToShow = new Array();
+	// bestimmen der anzuzeigenden Tracks
+	var tracksToAdd;
 
-	var tracksToAdd = window.gpxFiles[filter];
+	if (filter === 'all') {
+		tracksToAdd = new Array();
+		for (var key in window.gpxFiles) {
+			var list = window.gpxFiles[key];
+			list.forEach(function(track) {
+				tracksToAdd.push(track);
+			});
+		}
+	} else {
+		tracksToAdd = window.gpxFiles[filter];
+	}
+
 	if (!tracksToAdd) {
 		tracksToAdd = window.gpxFiles.development;
 	}
 
+	var tracksToShow = new Array();
 	if (tracksToAdd) {
 		tracksToAdd.forEach(function(track) {
 			tracksToShow.push(track);

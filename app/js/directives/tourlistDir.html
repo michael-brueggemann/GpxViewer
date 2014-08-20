@@ -1,9 +1,9 @@
 <div id="tourlist" class="tourlist">
 	
 	Groups:
-	<a ng-repeat="group in tourGroups" href="#/{{group}}">
-		{{group}}
-	</a>
+	<span ng-repeat="group in tourGroups">
+		<a  href="#/{{group}}">{{group}}</a> <span ng-hide="$last">|</span>
+	</span>
 
 	<table class="tourlistTable">
 		<tr>
@@ -20,7 +20,7 @@
 		<tr>
 			<td class="center"><input type="checkbox" ng-click="selectionChangedForAll($event)"></td>
 			<td><input ng-model="filter.name"></td>
-			<td></td>
+			<td class="center"><input ng-model="filter.date" size="5" tooltip="Datum String (z.B: 05.2014 oder 2014)" tooltip-placement="bottom"></td>
 			<td class="center"><input ng-model="filter.duration" size="5" tooltip="Dauer in Minuten (z.B: >200)" tooltip-placement="bottom"></td>
 			<td></td>
 			<td></td>
@@ -31,7 +31,7 @@
 		<!--<tr ng-repeat="tour in tourlist | filter:{name: filter.name}">-->
 		<tr ng-repeat="tour in tourlistMetaData | filter:myFilter(filter) | orderBy: sortProperty">
 			<td class="center"><input type="checkbox" ng-model="tour.selected"></td>
-			<td style="color: {{tour.color}}" tooltip-html-unsafe="{{tour.desc}}" tooltip-placement="right" ng-mouseover="showDesc(tour.desc)">{{tour.name}}</td>
+			<td style="color: {{tour.color}}" tooltip-html-unsafe="{{tour.desc}}" tooltip-placement="right" tooltip-append-to-body="true" ng-mouseover="showDesc(tour.desc)">{{tour.name}}</td>
 			<td class="center">{{tour.stats.date | date:"dd.MM.yyyy"}}</td>
 			<td class="center">{{tour.stats.duration | formatDuration}}</td>
 			<td class="center">{{tour.stats.eleMin | number:0}}</td>
@@ -39,6 +39,17 @@
 			<td class="center">{{tour.stats.eleRise | number:0}}</td>
 			<td class="center">{{tour.stats.distance | number:0}}</td>
 			<td class="center"><a href="{{tour.path}}">gpx</a></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>Summe:</td>
+			<td></td>
+			<td class="center">{{sum.duration | formatDuration}}</td>
+			<td></td>
+			<td></td>
+			<td class="center">{{sum.eleRise | number:0}}</td>
+			<td class="center">{{sum.distance | number:0}}</td>
+			<td></td>
 		</tr>
 	</table>
 	
