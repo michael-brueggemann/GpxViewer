@@ -147,6 +147,7 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 					if (entry.visible !== true) {
 						profile.removeChild(entry.layer);
 						delete entry.layer;
+						delete layersVisible[id];
 					}
 				}
 
@@ -372,7 +373,8 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			yyA.push(profileDisplayHeight);
 
 			// Zeichne Topo Linie
-			jg.setColor("#000000");
+			//jg.setColor("#000000");
+			jg.setColor(tour.color);
 			//jg.setColor("green");
 			for (var i = 0; i < xA.length - 1; i++) {
 				jg.drawLine(xA[i], yA[i], xA[i + 1], yA[i + 1]);
