@@ -11,10 +11,10 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 		var log = log4javascript.getLogger("gpxViewer.directives.osmDirCtrl");
 		log.debug('creating directive controller: osmDirCtrl');
 
-		// default map position
-		var defaultLat = 47.2333;
-		var defaultLon = 13.1570;
-		var defaultZoom = 11;
+		// default map position (Grossarl)
+		var defaultLat = 47.2391;
+		var defaultLon = 13.1967;
+		var defaultZoom = 12;
 
 		// time for scope change
 		var asyncExecTimeChanged = 50;
@@ -28,6 +28,7 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 		var layersCreated = {};
 
 		function init() {
+			log.debug("init()");
 			map = new OpenLayers.Map("osmMap", {
 				controls: [
 					new OpenLayers.Control.Navigation(),
@@ -51,7 +52,7 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 			var layerMarkers = new OpenLayers.Layer.Markers("Markers");
 			map.addLayer(layerMarkers);
 
-			map.setCenter(new OpenLayers.LonLat(defaultLat, defaultLon) // Center of the map
+			map.setCenter(new OpenLayers.LonLat(defaultLon, defaultLat) // Center of the map
 					.transform(
 							new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
 							new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
