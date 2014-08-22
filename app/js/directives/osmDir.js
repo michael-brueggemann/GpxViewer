@@ -37,7 +37,7 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 					new OpenLayers.Control.Attribution()],
 				maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
 				maxResolution: 156543.0399,
-				numZoomLevels: 19,
+				numZoomLevels: 18,
 				units: 'm',
 				projection: new OpenLayers.Projection("EPSG:900913"),
 				displayProjection: new OpenLayers.Projection("EPSG:4326")
@@ -87,6 +87,12 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 		function focus(pLayer) {
 			log.debug("focus()");
 			layer = pLayer;
+			
+			if (Object.keys(layersVisible).length === 0) {
+				log.debug("layersVisible is empty => no need to change focus");
+				return;
+			}
+			
 
 			// We must wait a little bit (Openlayers error message: bounds is null)
 			asyncExec('osmDirCtrl-focus', asyncExecTimeFocus, function() {
@@ -106,6 +112,10 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 				if (maxBounds) {
 					log.debug('max bounds:', maxBounds.toString());
 					map.zoomToExtent(maxBounds, false);
+					var zoom = map.getZoom();
+					if (zoom >= 15) {
+						map.zoomTo(14);
+					}
 				} else {
 					log.debug('no max bounds available');
 				}
@@ -168,6 +178,8 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 //					}
 //				}
 
+				focus();
+				
 				log.timeEnd('osm map');
 			}
 		}

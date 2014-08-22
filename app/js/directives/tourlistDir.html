@@ -8,7 +8,7 @@
 	<table class="tourlistTable">
 		<tr>
 			<th></th>
-			<th ng-click="sortProperty = 'stats.name'" ng-class="{highlightSorting: sortProperty=='stats.name'}">Name</th>
+			<th ng-click="sortProperty = 'name'" ng-class="{highlightSorting: sortProperty=='name'}">Name</th>
 			<th class="center" ng-click="sortProperty = 'stats.date'" ng-class="{highlightSorting: sortProperty=='stats.date'}">Datum</th>
 			<th class="center" ng-click="sortProperty = 'stats.duartion'" ng-class="{highlightSorting: sortProperty=='stats.duartion'}">Dauer</th>
 			<th class="center" ng-click="sortProperty = 'stats.eleMin'" ng-class="{highlightSorting: sortProperty=='stats.eleMin'}">min H.</th>
@@ -18,7 +18,7 @@
 			<th></th>
 		</tr>
 		<tr>
-			<td class="center"><input type="checkbox" ng-click="selectionChangedForAll($event)"></td>
+			<td class="center"><input type="checkbox" ng-model="selectAll" ng-click="selectionChangedForAll($event)"></td>
 			<td><input ng-model="filter.name"></td>
 			<td class="center"><input ng-model="filter.date" size="5" tooltip="Datum String (z.B: 05.2014 oder 2014)" tooltip-placement="bottom"></td>
 			<td class="center"><input ng-model="filter.duration" size="5" tooltip="Dauer in Minuten (z.B: >200)" tooltip-placement="bottom"></td>

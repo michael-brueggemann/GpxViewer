@@ -62,7 +62,12 @@ function mapCtrl($scope, $routeParams, gpxParser) {
 	}
 
 	function addTour(tour) {
-		tour.color = '#' + colorList[Object.keys($scope.tourlist).length];
+		if (Object.keys($scope.tourlist).length < colorList.length) {
+			tour.color = '#' + colorList[Object.keys($scope.tourlist).length-1];
+		} else {
+			log.debug('not enough colors. Create random color.');
+			tour.color = randomColor({luminosity: 'dark'});
+		}
 
 		var selected = false;
 

@@ -131,7 +131,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 		function filterByDate(filterDate, tour) {
 
 			// try to interpret as year (e.g. "2004")
-			if (filterDate.length === 4) {
+			if (filterDate.length === 4 && tour.stats.date instanceof Date) {
 				log.trace("  interpret as year");
 				if (sdfYear.format(tour.stats.date) === filterDate) {
 					return true;
@@ -141,7 +141,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 			}
 
 			// try to interpret as month.year (e.g. "05.2004")
-			if (filterDate.length === 7) {
+			if (filterDate.length === 7 && tour.stats.date instanceof Date) {
 				log.trace("  interpret as month.year");
 				if (sdfMonthYear.format(tour.stats.date) === filterDate) {
 					return true;

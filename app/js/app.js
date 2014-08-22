@@ -52,9 +52,10 @@ if (window.location.host === 'localhost:8383') {
 	log4javascript.getLogger('gpxViewer.models').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.utils.asyncExec').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.services.gpxParser').setLevel(log4javascript.Level.INFO);
-	log4javascript.getLogger('gpxViewer.directives.tourlistDirCtrl').setLevel(log4javascript.Level.DEBUG);
+	log4javascript.getLogger('gpxViewer.controllers.mapCtrl').setLevel(log4javascript.Level.INFO);
+	log4javascript.getLogger('gpxViewer.directives.tourlistDirCtrl').setLevel(log4javascript.Level.INFO);
 	log4javascript.getLogger('gpxViewer.directives.osmDirCtrl').setLevel(log4javascript.Level.INFO);
-	log4javascript.getLogger('gpxViewer.directives.profileDirCtrl').setLevel(log4javascript.Level.DEBUG);
+	log4javascript.getLogger('gpxViewer.directives.profileDirCtrl').setLevel(log4javascript.Level.INFO);
 
 	logRoot.trace('Trace level check');
 	logRoot.info('Logging loaded and configured.');
