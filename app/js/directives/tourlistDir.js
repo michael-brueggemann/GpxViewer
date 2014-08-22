@@ -23,7 +23,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 		$scope.tourlistMetaData = new Array();
 
 		// default sort order
-		$scope.sortProperty = 'stats.eleRise';
+		$scope.sortProperty = 'stats.date';
 
 		// bad (access of window)
 		$scope.tourGroups = new Array();
