@@ -66,9 +66,9 @@ function mapCtrl($scope, $routeParams, gpxParser) {
 
 		var selected = false;
 
-		// preselect the first 5 entries
+		// optinal: preselect the first 5 entries (set selected = true)
 		if (Object.keys($scope.tourlist).length < 5) {
-			selected = true;
+			selected = false;
 		}
 
 		$scope.tourlist[tour.id] = {
