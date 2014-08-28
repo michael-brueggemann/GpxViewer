@@ -20,7 +20,7 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 		var asyncExecTimeChanged = 50;
 
 		// time for osm to focus map (gpx files must be loaded)
-		var asyncExecTimeFocus = 250;
+		var asyncExecTimeFocus = 500;
 
 		var map; //complex object of type OpenLayers.Map
 		var layer;

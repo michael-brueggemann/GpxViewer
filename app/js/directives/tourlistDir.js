@@ -16,7 +16,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 
 		$scope.filter = {};
 		$scope.filter.name = '';
-		
+
 		// sum for filtered list
 		$scope.sum = {};
 
@@ -50,7 +50,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 
 		$scope.myFilter = function(criteria) {
 			log.debug('myFilter()');
-			
+
 			$scope.sum = {
 				duration: 0,
 				eleRise: 0,
@@ -58,7 +58,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 			};
 			$scope.sum.duration = new Date();
 			$scope.sum.duration.setTime(0);
-			
+
 			/**
 			 * @param {Tour} tour
 			 * @returns {@var;result|Boolean}
@@ -109,8 +109,14 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 				if (tour.isFilterVisible === false) {
 					tour.selected = false;
 				}
-				
+
 				if (tour.isFilterVisible === true) {
+
+					// reset the "select all" checkbox if a not selected track is visible
+					if (tour.selected === false) {
+						$scope.selectAll = false;
+					}
+
 					if (tour.stats.duration instanceof Date) {
 						$scope.sum.duration = new Date($scope.sum.duration.getTime() + tour.stats.duration.getTime());
 					}
@@ -160,7 +166,7 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 			if (filterDate.length >= 4) {
 				return false;
 			}
-			
+
 			return true;
 		}
 
