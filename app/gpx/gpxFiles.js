@@ -37,4 +37,6 @@ window.gpxFiles.grossarl.push('gpx/Grossarl/Reitalm.gpx');
 window.gpxFiles.grossarl.push('gpx/Grossarl/Saukaralm.gpx');
 window.gpxFiles.grossarl.push('gpx/Grossarl/Unterwandalm.gpx');
 window.gpxFiles.grossarl.push('gpx/Grossarl/Vorderstadluck.gpx');
+
 window.gpxFiles.grossarl.push('gpx/Grossarl/Talwander-und-Radweg.gpx');
+window.gpxFiles.grossarl.push('gpx/Grossarl/Heimatmuseum Kösslerhäusl.gpx');
