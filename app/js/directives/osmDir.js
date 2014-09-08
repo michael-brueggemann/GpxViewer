@@ -17,10 +17,11 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 		var defaultZoom = 12;
 
 		// time for scope change
-		var asyncExecTimeChanged = 50;
+		var asyncExecTimeChanged = 10;
 
-		// time for osm to focus map (gpx files must be loaded)
-		var asyncExecTimeFocus = 500;
+		// time for osm to focus map (gpx files must be loaded) (fixed with layer eventlistener)
+		// wait for focus for additional tracks
+		var asyncExecTimeFocus = 200;
 
 		var map; //complex object of type OpenLayers.Map
 		var layer;
@@ -34,7 +35,12 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 					new OpenLayers.Control.Navigation(),
 					new OpenLayers.Control.PanZoomBar(),
 					new OpenLayers.Control.LayerSwitcher(),
-					new OpenLayers.Control.Attribution()],
+					//new OpenLayers.Control.Attribution(),
+					new OpenLayers.Control.ScaleLine( {
+						maxWidth: 200,
+						bottomOutUnits: '',
+						bottomInUnits: ''
+					} )],
 				maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
 				maxResolution: 156543.0399,
 				numZoomLevels: 18,
@@ -145,6 +151,8 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 			if ($scope.tourlist) {
 				log.time('osm map');
 
+				var trackRemoved = false;
+
 				// reset visible flag
 				for (var id in layersVisible) {
 					layersVisible[id].visible = false;
@@ -162,8 +170,13 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 						if (layersVisible[id]) {
 							map.removeLayer(layersVisible[id].layer);
 							delete layersVisible[id];
+							trackRemoved = true;
 						}
 					}
+				}
+
+				if (trackRemoved) {
+					focus();
 				}
 
 //				layersVisible.forEach(function(layer) {
@@ -178,8 +191,6 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 //					}
 //				}
 
-				focus();
-				
 				log.timeEnd('osm map');
 			}
 		}
@@ -211,7 +222,15 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 					}),
 					style: layerStyle,
 					projection: new OpenLayers.Projection("EPSG:4326")
+					,
+					eventListeners: {
+						featuresadded: function(e) {
+							log.debug('eventlistener for featureadded called');
+							focus();
+						}
+					}
 				});
+				
 				layersCreated[tour.path] = lgpx;
 			}
 
@@ -219,10 +238,10 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 			layersVisible[tour.id] = {
 				visible: true,
 				layer: lgpx
-			}
+			};
 
 			// focus
-			focus();
+			//focus();
 		}
 
 
