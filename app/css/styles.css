@@ -1,48 +1,93 @@
 
 .tourlist {
 	position: absolute;
-	top: 2%;
-	left: 1%;
-	width: 40%;
-	height: 60%;
+	top: 5px;
+	bottom: 5px;
+	left: 5px;
+	width: 195px;
+	padding: 2px;
 	border-color: black;
 	border-style: solid;
 	border-width: 1px;
+	overflow-x: hidden;
 	overflow-y: auto;
+	z-index: 100;
 }
 
 .osmMap {
 	position: absolute;
-	top: 2%;
-	right: 1%;
-	width: 57%;
-	height: 60%;
+	top: 5px;
+	bottom: 5px;
+	left: 205px;
+	right: 5px;
 	border-color: black;
 	border-style: solid;
 	border-width: 1px;
+	z-index: 0;
 }
 
 .profile {
 	position: absolute;
-	bottom: 2%;
-	left: 1%;
-	width: 98%;
-	height: 34%;
+	left: 210px;
+	right: 10px;
+	bottom: 10px;
+	height: 25%;
+	min-height: 120px;
+	max-height: 200px;
 	border-color: black;
 	border-style: solid;
 	border-width: 1px;
+	z-index: 50;
+}
+
+/* small tourlist (e.g. Nexus 5) */
+@media only screen and (max-width: 640px) {
+	.tourlist {
+		width: 155px;
+	}
+
+	.osmMap {
+		left: 165px;
+	}
+
+	.profile {
+		left: 170px;
+	}
+}
+
+.grouplist {
+	display: inline;
+	margin-left: 25px;
 }
 
 .tourlistTable {
 	width: 100%;
+}
+.tourlistTable td {
+	padding: 1px;
 }
 
 .tourlistTable .center {
 	text-align: center;
 }
 
-.myProfile {
-	opacity:.25;
+.profileTourArea {
+	opacity: 0.1;
+}
+.profileGrid {
+	color: black;
+	z-index: 55;
+	opacity: 0.35;
+}
+.profileGridText {
+	color: black;
+	z-index: 55;
+	font-size: 10px !important;
+	font-weight: 600 !important;
+}
+.profileBackground {
+	background-color: white !important;
+	opacity: 0.4;
 }
 
 .highlightSorting {
@@ -52,4 +97,31 @@
 /* overwrite bootstrap settings */
 .tooltip-inner {
     max-width: 550px;
+}
+
+.buttonExtend {
+	position: absolute;
+	left: 2px;
+	top: 2px;
+}
+
+@media only screen and (min-width: 1000px) {
+	.profileGridText {
+		font-size: 12px !important;
+		font-weight: normal !important;
+	}
+}
+
+.tourlistExtended {
+	height: 90%;
+	width: 95%;
+	max-width: 700px;
+	z-index: 100;
+	background-color: white;
+	opacity: 0.9;
+	border-width: 2px;
+}
+
+.grouplistExtended {
+	display: none;
 }

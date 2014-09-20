@@ -7,15 +7,14 @@
 
 
 angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
-	function($scope, gpxParser) {
+	function ($scope, gpxParser) {
 		var log = log4javascript.getLogger("gpxViewer.directives.profileDirCtrl");
 		log.debug('creating directive controller: profileDirCtrl');
 
 		var drawId = "profile";
 		var profile = document.getElementById(drawId);
 
-
-		var asyncExecTime = 10;
+		var asyncExecTime = 50;
 
 		var parsing = new Array();
 		var layersVisible = {};
@@ -25,12 +24,15 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			autoScaleY: true,
 //			scaleX: 'auto',
 //			scaleY: 'auto',
-			gridStepXPixel: 200, // Pixel je Step X (soll)
-			gridStepYPixel: 80, // // Pixel je Step Y (soll)
-			gridColorLine: '#BBB',
-			gridColorText: '#555',
+			gridStepXPixel: 50, // Pixel je Step X (default, calculated)
+			gridStepYPixel: 25, // // Pixel je Step Y (soll)
+			gridColorLine: 'green',
+			gridColorText: 'black',
 			basisY: 'relativ'
 		};
+		var gridStepXPixelMin = 50;
+		var gridStepXPixelDividend = 25;
+		
 		var scaleSettings = {
 			scaleX: null, // Meter pro Pixel
 			scaleY: null, // Meter pro Pixel
@@ -43,7 +45,7 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 		};
 
 
-		$scope.$watch('tourlist', function(newTourlist, oldTourlist) {
+		$scope.$watch('tourlist', function (newTourlist, oldTourlist) {
 			log.trace('watch for tourlist triggered');
 			if (Object.keys(newTourlist).length !== Object.keys(oldTourlist).length) {
 				asyncExec('profileDirCtrl-tourlist', asyncExecTime, changed);
@@ -114,7 +116,7 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 
 			if (scaleChanged === true) {
 				log.info('scale chqanged => redraw all profiles! (' + tours.length + ')');
-				
+
 				// delete the current profile
 				profile.innerHTML = '';
 				createGrid();
@@ -130,7 +132,7 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 				for (var id in layersVisible) {
 					layersVisible[id].visible = false;
 				}
-				
+
 				for (var i = 0; i < tours.length; i++) {
 					var tour = tours[i];
 
@@ -145,7 +147,11 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 				for (var id in layersVisible) {
 					var entry = layersVisible[id];
 					if (entry.visible !== true) {
-						profile.removeChild(entry.layer);
+						try {
+							profile.removeChild(entry.layer);
+						} catch (e) {
+							log.warn('can not remove layer for id:', id);
+						}
 						delete entry.layer;
 						delete layersVisible[id];
 					}
@@ -175,7 +181,7 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 		}
 
 		function autoScale() {
-			log.debug("autoScale()");
+			log.debug('autoScale()');
 			log.time('autoScale', log4javascript.Level.DEBUG);
 
 			var scaleChanged = false;
@@ -183,13 +189,21 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			var profileDisplayWidth = profile.offsetWidth - 2; // border
 			var profileDisplayHeight = profile.offsetHeight - 2; // border
 
-			log.debug("profileDisplayWidth", profileDisplayWidth);
-			log.debug("profileDisplayHeight", profileDisplayHeight);
+			log.debug('profileDisplayWidth', profileDisplayWidth);
+			log.debug('profileDisplayHeight', profileDisplayHeight);
+			
+			// calculate gridXStep
+			config.gridStepXPixel = gridStepXPixelMin;
+			var addition = (profileDisplayWidth-480)/gridStepXPixelDividend;
+			if (addition > 0) {
+				config.gridStepXPixel += addition;
+			}
+			log.debug('gridStepXPixel:', config.gridStepXPixel);
 
 			var eleDifMax = 0;
 			var distanceMax = 0;
 
-			tours.forEach(function(c) {
+			tours.forEach(function (c) {
 				eleDifMax = nullableMax(eleDifMax, c.stats.eleMax - c.stats.eleMin);
 				distanceMax = nullableMax(distanceMax, c.stats.distance);
 			});
@@ -235,6 +249,10 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			var profileDisplayWidth = profile.offsetWidth - 2; // border
 			var profileDisplayHeight = profile.offsetHeight - 2; // border
 
+			jg.setColor('black');
+			jg.setCss('profileBackground');
+			jg.fillRect(0, 0, profileDisplayWidth, profileDisplayHeight);
+
 			// grid line: distance
 			log.debug("create grid line - distance");
 
@@ -260,11 +278,20 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			log.debug('stepXPixel: ' + stepXPixel);
 
 			// grid line: width
-			for (var i = 1; i <= maxStepsX+1; i += 1) {
-				jg.setColor(config.gridColorLine);
-				jg.drawLine(i * stepXPixel, 0, i * stepXPixel, profileDisplayHeight);
-				jg.setColor(config.gridColorText);
-				jg.drawString(i * stepXDistance, i * stepXPixel, profileDisplayHeight - 20);
+			for (var i = 1; i <= maxStepsX + 1; i += 1) {
+				var xValueForLine = Math.floor(i * stepXPixel);
+				jg.setCss('profileGrid');
+				jg.drawLine(xValueForLine, 0, xValueForLine, profileDisplayHeight);
+				
+				var labelNumber = (i*stepXDistance / 1000);
+				var label = null;
+				if (labelNumber < 10) {
+					label = labelNumber.toPrecision(4);
+				} else {
+					label = labelNumber.toPrecision(5);
+				}
+				jg.setCss('profileGridText');
+				jg.drawString(label, xValueForLine, profileDisplayHeight - 20);
 			}
 
 			// grid line: height
@@ -283,11 +310,22 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			log.debug('stepYPixel: ' + stepYPixel);
 
 			for (var i = 1; i <= maxStepsY; i += 1) {
-				jg.setColor(config.gridColorLine);
+				jg.setCss('profileGrid');
 				jg.drawLine(0, profileDisplayHeight - i * stepYPixel, profileDisplayWidth, profileDisplayHeight - i * stepYPixel);
-				jg.setColor(config.gridColorText);
-				jg.drawString(i * stepYDistance, 0, profileDisplayHeight - i * stepYPixel);
+				
+				var labelNumber = i*stepYDistance;
+				var label = null;
+				if (labelNumber < 1000) {
+					label = labelNumber;
+				} else {
+					labelNumber = labelNumber / 1000;
+					label = labelNumber.toPrecision(4);
+				}
+				jg.setCss('profileGridText');
+				jg.drawString(label, 0, profileDisplayHeight - i * stepYPixel);
 			}
+
+			jg.setCss(null);
 
 			log.timeEnd('createGrid');
 
@@ -325,8 +363,8 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			var yA = [];
 
 			var points = new Array();
-			tour.tracks.forEach(function(track) {
-				track.segments.forEach(function(segment) {
+			tour.tracks.forEach(function (track) {
+				track.segments.forEach(function (segment) {
 					points = points.concat(segment.points);
 				});
 			});
@@ -375,6 +413,7 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			// Zeichne Topo Linie
 			//jg.setColor("#000000");
 			jg.setColor(tour.color);
+			jg.setStroke(2);
 			//jg.setColor("green");
 			for (var i = 0; i < xA.length - 1; i++) {
 				jg.drawLine(xA[i], yA[i], xA[i + 1], yA[i + 1]);
@@ -382,7 +421,7 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 
 			// Zeichne Topo Fläche
 			jg.setColor(tour.color);
-			jg.setCss('myProfile');
+			jg.setCss('profileTourArea');
 			jg.fillPolygon(xxA, yyA);
 
 			log.timeEnd('createProfile');
@@ -392,13 +431,19 @@ angular.module('gpxViewer').controller('profileDirCtrl', ['$scope', 'gpxParser',
 			log.timeEnd('createProfile-paint');
 		}
 
+		function onResizeTriggered() {
+			asyncExec('profileDirCtrl-onResize', 500, changed);
+		}
+
+		window.onresize = onResizeTriggered;
+
 		initialize();
 	}
 ]);
 
 
 angular.module('gpxViewer').directive('profile', [
-	function() {
+	function () {
 		var log = log4javascript.getLogger("gpxViewer.directives.profile");
 		log.debug('creating directive: profile');
 

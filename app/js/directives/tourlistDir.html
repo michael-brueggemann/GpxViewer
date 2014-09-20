@@ -1,14 +1,18 @@
-<div id="tourlist" class="tourlist">
+<div id="tourlist" class="tourlist" ng-class="{tourlistExtended: isExtended}">
 	
-	Groups:
-	<span ng-repeat="group in tourGroups">
-		<a  href="#/{{group}}">{{group}}</a> <span ng-hide="$last">|</span>
-	</span>
+	<button class="buttonExtend" ng-click="changeSize()">{{isExtended ? '-' : '+'}}</button>
+	
+	<div class="grouplist" ng-class="{grouplistExtended: isExtended==false}">
+		Groups:
+		<span ng-repeat="group in tourGroups">
+			<a  href="#/{{group}}">{{group}}</a> <span ng-hide="$last">|</span>
+		</span>
+	</div>
 
 	<table class="tourlistTable">
 		<tr>
 			<th></th>
-			<th ng-click="sortProperty = 'name'" ng-class="{highlightSorting: sortProperty=='name'}">Name</th>
+			<th style="padding-left: 15px" ng-click="sortProperty = 'name'" ng-class="{highlightSorting: sortProperty=='name'}">Name</th>
 			<th class="center" ng-click="sortProperty = 'stats.date'" ng-class="{highlightSorting: sortProperty=='stats.date'}">Datum</th>
 			<th class="center" ng-click="sortProperty = 'stats.duartion'" ng-class="{highlightSorting: sortProperty=='stats.duartion'}">Dauer</th>
 			<th class="center" ng-click="sortProperty = 'stats.eleMin'" ng-class="{highlightSorting: sortProperty=='stats.eleMin'}">min H.</th>

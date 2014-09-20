@@ -33,6 +33,16 @@ angular.module('gpxViewer').controller('tourlistDirCtrl', ['$scope', 'gpxParser'
 			$scope.tourGroups.push(key);
 		}
 
+		$scope.isExtended = true;
+		$scope.changeSize = function() {
+			log.debug('changeSize()');
+			if ($scope.isExtended === true) {
+				$scope.isExtended = false;
+			} else if ($scope.isExtended === false) {
+				$scope.isExtended = true;
+			}
+		};
+
 		$scope.selectionChangedForAll = function(event) {
 			log.debug('selectionChangedForAll');
 

@@ -36,11 +36,11 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 					new OpenLayers.Control.PanZoomBar(),
 					new OpenLayers.Control.LayerSwitcher(),
 					//new OpenLayers.Control.Attribution(),
-					new OpenLayers.Control.ScaleLine( {
+					new OpenLayers.Control.ScaleLine({
 						maxWidth: 200,
 						bottomOutUnits: '',
 						bottomInUnits: ''
-					} )],
+					})],
 				maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
 				maxResolution: 156543.0399,
 				numZoomLevels: 18,
@@ -55,8 +55,28 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 			map.addLayer(layerMapnik);
 			var layerCycleMap = new OpenLayers.Layer.OSM.CycleMap("CycleMap");
 			map.addLayer(layerCycleMap);
-			var layerMarkers = new OpenLayers.Layer.Markers("Markers");
-			map.addLayer(layerMarkers);
+//			var layerMarkers = new OpenLayers.Layer.Markers("Markers");
+//			map.addLayer(layerMarkers);
+
+//			var hillUrl = 'http://{s}.tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png';
+//			var hillAttribution = 'Hillshading: SRTM3 v2 (<a href="http://www2.jpl.nasa.gov/srtm/">NASA</a>)';
+//			var hill = new L.TileLayer(hillUrl, {maxZoom: 17, attribution: hillAttribution});
+//			
+//			var hill = new OpenLayers.Layer.TMS("Hillshading", "http://toolserver.org/~cmarqu/hill/",
+//					{type: 'png', getURL: osm_getTileURL, displayOutsideMaxExtent: true, attribution: '<a href="http://nasa.gov/">NASA SRTM</a>',
+//						opacity: 1, isBaseLayer: false, visibility: true, numZoomLevels: 17, transparent: true, noOpaq: true});
+
+			var hill = new OpenLayers.Layer.TMS(
+					"Hillshading (NASA SRTM3 v2)",
+					"http://toolserver.org/~cmarqu/hill/",
+					{
+						type: 'png', getURL: osm_getTileURL,
+						displayOutsideMaxExtent: true, isBaseLayer: false,
+						transparent: true, opacity: 0.9999999999, "visibility": true
+					}
+			);
+			
+			map.addLayer(hill);
 
 			map.setCenter(new OpenLayers.LonLat(defaultLon, defaultLat) // Center of the map
 					.transform(
@@ -93,19 +113,19 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 		function focus(pLayer) {
 			log.debug("focus()");
 			layer = pLayer;
-			
+
 			if (Object.keys(layersVisible).length === 0) {
 				log.debug("layersVisible is empty => no need to change focus");
 				return;
 			}
-			
+
 
 			// We must wait a little bit (Openlayers error message: bounds is null)
 			asyncExec('osmDirCtrl-focus', asyncExecTimeFocus, function() {
 				log.debug("focus() asyncExec callback triggered");
 
 				var maxBounds = new OpenLayers.Bounds();
-				
+
 				if (!layer) {
 					for (var id in layersVisible) {
 						maxBounds.extend(layersVisible[id].layer.getDataExtent());
@@ -230,7 +250,7 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 						}
 					}
 				});
-				
+
 				layersCreated[tour.path] = lgpx;
 			}
 
@@ -265,6 +285,23 @@ angular.module('gpxViewer').directive('osm', [
 			templateUrl: 'js/directives/osmDir.html'};
 	}
 ]);
+
+
+
+function osm_getTileURL(bounds) {
+	var res = this.map.getResolution();
+	var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+	var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+	var z = this.map.getZoom();
+	var limit = Math.pow(2, z);
+
+	if (y < 0 || y >= limit) {
+		return OpenLayers.Util.getImagesLocation() + "404.png";
+	} else {
+		x = ((x % limit) + limit) % limit;
+		return this.url + z + "/" + x + "/" + y + "." + this.type;
+	}
+}
 
 
 log4javascript.getRootLogger().trace('file: osmDir loaded');

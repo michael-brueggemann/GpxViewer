@@ -896,7 +896,13 @@ interior_extrema. */
 
 	this.drawString = function(txt, x, y)
 	{
-		this.htm += '<div style="position:absolute;white-space:nowrap;'+
+		this.htm += '<div ';
+
+		if (this.css && this.css.length > 0) {
+			this.htm += ' class="' +this.css+ '" ';
+		}
+
+		this.htm += 'style="position:absolute;white-space:nowrap;' +
 			'left:' + x + 'px;'+
 			'top:' + y + 'px;'+
 			'font-family:' +  this.ftFam + ';'+
