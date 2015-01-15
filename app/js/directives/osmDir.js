@@ -68,7 +68,8 @@ angular.module('gpxViewer').controller('osmDirCtrl', ['$scope', 'gpxParser',
 
 			var hill = new OpenLayers.Layer.TMS(
 					"Hillshading (NASA SRTM3 v2)",
-					"http://toolserver.org/~cmarqu/hill/",
+//					"http://toolserver.org/~cmarqu/hill/",
+					"http://b.tiles.wmflabs.org/hillshading/",
 					{
 						type: 'png', getURL: osm_getTileURL,
 						displayOutsideMaxExtent: true, isBaseLayer: false,
