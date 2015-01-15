@@ -116,6 +116,7 @@
 	height: 90%;
 	width: 95%;
 	max-width: 700px;
+	max-height: 800px;
 	z-index: 100;
 	background-color: white;
 	opacity: 0.9;
